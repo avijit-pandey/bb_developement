@@ -157,10 +157,10 @@ void lcd_string(char *str)
 	}
 }
 
-void lcd_string2(char x1, char x2, char *str)
+void lcd_string2(char x1, char x2, char *str2)
 {
 	lcd_cursor(x1,x2);
-	lcd_string(*str);
+	lcd_string(str2);
 }
 //Position the LCD cursor at "row", "column".
 

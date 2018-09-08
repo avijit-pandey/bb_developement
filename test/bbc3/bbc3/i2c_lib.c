@@ -91,7 +91,7 @@ UINT8 i2c_getstatus()
 {
 	UINT8 status;
 	status = TWSR & 0xF8;			//5 bits of TWSR register gives the status
-//	lcd_print(2,1,status,5);
+//	lcd_print(1,10,status,5);
 //	buzzer_on();
 //	_delay_ms(20);
 //	buzzer_off();

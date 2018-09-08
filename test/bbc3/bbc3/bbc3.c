@@ -17,6 +17,7 @@
 #include <avr/io.h>
 #include <util/delay.h>
 #include <avr/interrupt.h>
+#include <stdlib.h>
 #include <math.h> //included to support power function
 
 #include "i2c_lib.c"
@@ -63,16 +64,28 @@ void check_status(STAT status)
 
 void ADXL345_accelero_init()
 {
-	buzzer_on();
-	_delay_ms(150);
-	buzzer_off();
-	_delay_ms(150);
-	i2c_sendbyte(0x53<<1,0x2c,0x0a);
+
+	int k=i2c_sendbyte(0x53<<1,0x2c,0x0a);
 	_delay_ms(1000);
-	i2c_sendbyte(0x53<<1,0x31,0x41);
+	lcd_print(1,10,k,3);
+		buzzer_on();
+		_delay_ms(150);
+		buzzer_off();
+		_delay_ms(150);
+	k=i2c_sendbyte(0x53<<1,0x31,0x41);
 	_delay_ms(1000);
-	i2c_sendbyte(0x53<<1,0x2d,0x08);
+	lcd_print(1,10,k,3);
+		buzzer_on();
+		_delay_ms(150);
+		buzzer_off();
+		_delay_ms(150);
+	k=i2c_sendbyte(0x53<<1,0x2d,0x08);
 	_delay_ms(1000);
+	lcd_print(1,10,k,3);
+		buzzer_on();
+		_delay_ms(150);
+		buzzer_off();
+		_delay_ms(150);
 }
 
 void L3G4200D_gyro_init()
@@ -85,6 +98,8 @@ void L3G4200D_gyro_init()
 	_delay_ms(1000);
 }
 
+
+
 int main(void)
 {
 	lcd_port_config();
@@ -92,34 +107,45 @@ int main(void)
 	lcd_init();
 	
 	unsigned int test;
-	
+	int K,L;
+
 	i2c_init();
 	uart0_init();
+	
+	i2c_getbyte(0x53<<1,0x32,&test);
+	
+	
 	ADXL345_accelero_init();
 	L3G4200D_gyro_init();
 	lcd_cursor(1,1);
 	lcd_wr_char('x');
-	lcd_cursor(1,6);
-	lcd_wr_char('y');
-	lcd_cursor(1,11);
-	lcd_wr_char('z');
-
+//	uart_tx_string("test");
 	while (1)
-	{			
-		int K;
-		K=i2c_getbyte(0x53<<1,0x32,&test);
-		lcd_print(2,2,test,3);		
-		K=i2c_getbyte(0x53<<1,0x34,&test);
-		lcd_print(2,7,test,3);
-		K=i2c_getbyte(0x53<<1,0x36,&test);
-		lcd_print(2,12,test,3);
-		K=i2c_getbyte(0x69<<1,0x28,&test);
-		lcd_print(1,2,test,3);
-		K=i2c_getbyte(0x69<<1,0x2a,&test);
-		lcd_print(1,7,test,3);
-		K=i2c_getbyte(0x69<<1,0x2c,&test);
-		lcd_print(1,12,test,3);
+	{	
+		char acc_x[8];
+		char acc_y[8];
 		
+		i2c_getbyte(0x53<<1,0x32,&test);
+		itoa(test,acc_x,10);
+		lcd_cursor(1,3);
+		lcd_string(acc_x);
+		
+		
+
+		i2c_getbyte(0x53<<1,0x34,&test);
+		itoa(test,acc_y,10);
+		lcd_cursor(2,3);
+		lcd_string(acc_y);
+
+
+
+		
+		
+		uart_tx_string(acc_x);
+		uart_tx(',');
+		uart_tx_string(acc_y);
+		uart_tx('\n');
+		_delay_ms(500);
 	}	
 
 }
